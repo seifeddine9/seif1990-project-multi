@@ -153,9 +153,9 @@ HeaderHelper.prototype.getheadernotifications = function () {
         //console.log('firstday: ', firstday);
 
 
-
+  if(response!=''){
         $.each(response, function (index, notification_list) {
-
+          
             if (notification_list.date_action >= firstday) {
                 var html = BackendHeader.helper.getFilterHtmlheadernotifications(notification_list);
 
@@ -163,9 +163,12 @@ HeaderHelper.prototype.getheadernotifications = function () {
             } else {
                 BackendHeader.helper.deletenotification(notification_list.id);
             }
-
+        
         });
-
+        }else{
+            $('#notification_results').append('<center><strong>Pas de notifications</strong></center>');
+            $('#notification_results').css('height', '20px');
+        }
 
 
     }, 'json').fail(GeneralFunctions.ajaxFailureHandler);

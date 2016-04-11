@@ -160,7 +160,7 @@ ServicesHelper.prototype.bindEventHandlers = function() {
             $('#filter-services .results').css('color', '#AAA');
             return; // exit because we are on edit mode
         }
-        document.getElementById("File").disabled = false;
+        //document.getElementById("File").disabled = false;
         var serviceId = $(this).attr('data-id');
         $('#File').attr('data-id', serviceId);
         
@@ -183,6 +183,7 @@ ServicesHelper.prototype.bindEventHandlers = function() {
      * Event: Add New Service Button "Click"
      */
     $('#add-service').click(function() {
+        document.getElementById("File").disabled = false;
         BackendServices.helper.resetForm();
         $('#services .add-edit-delete-group').hide();
         $('#services .save-cancel-group').show();
@@ -238,6 +239,7 @@ ServicesHelper.prototype.bindEventHandlers = function() {
      * Event: Edit Service Button "Click"
      */
     $('#edit-service').click(function() {
+         document.getElementById("File").disabled = false;
         $('#services .add-edit-delete-group').hide();
         $('#services .save-cancel-group').show();
         $('#services .details').find('input, textarea').prop('readonly', false);
@@ -267,52 +269,53 @@ ServicesHelper.prototype.bindEventHandlers = function() {
         GeneralFunctions.displayMessageBox(EALang['delete_service'],
                 EALang['delete_record_prompt'], messageBtns);
     });
-    $('#File').change(function (event) {
-        var val = $('#File').val();
-        
-        console.log("val" + val);
-        var serviceId = $(this).attr('data-id');
-        console.log('serviceId', serviceId);
-        if (val == '') {
-            event.preventDefault();
-            $('#File').addClass('error');
-        } else
-        {   
-            
-            var file_data = $('#File').prop('files')[0];
-            var form_data = new FormData();
-            form_data.append('file', file_data);
-            form_data.append('csrfToken', GlobalVariables.csrfToken);
-            form_data.append('serviceId', serviceId);
-            console.log('form_data',form_data);
-            //$('.upload-file').hide();
-            //$("#progress").removeClass('hidden');
-
-            var postUrl = GlobalVariables.baseUrl + 'index.php/backend_api/send_file_service';
-
-
-
-
-            $.ajax({
-                url: postUrl, // point to server-side PHP script 
-                dataType: 'json', // what to expect back from the PHP script, if anything
-                cache: false,
-                contentType: false,
-                processData: false,
-                data: form_data,
-                type: 'post',
-                success: function (response) {
-                    //alert('success');
-                    window.location.reload();
-                    console.log('response: ',response);
-                    GlobalVariables.full_path = response;
-                }
-
-
-            });
-        }
-
-    });
+//    
+//    $('#File').change(function (event) {
+//        var val = $('#File').val();
+//        
+//        console.log("val" + val);
+//        var serviceId = $(this).attr('data-id');
+//        console.log('serviceId', serviceId);
+//        if (val == '') {
+//            event.preventDefault();
+//            $('#File').addClass('error');
+//        } else
+//        {   
+//            
+//            var file_data = $('#File').prop('files')[0];
+//            var form_data = new FormData();
+//            form_data.append('file', file_data);
+//            form_data.append('csrfToken', GlobalVariables.csrfToken);
+//            form_data.append('serviceId', serviceId);
+//            console.log('form_data',form_data);
+//            //$('.upload-file').hide();
+//            //$("#progress").removeClass('hidden');
+//
+//            var postUrl = GlobalVariables.baseUrl + 'index.php/backend_api/send_file_service';
+//
+//
+//
+//
+//            $.ajax({
+//                url: postUrl, // point to server-side PHP script 
+//                dataType: 'json', // what to expect back from the PHP script, if anything
+//                cache: false,
+//                contentType: false,
+//                processData: false,
+//                data: form_data,
+//                type: 'post',
+//                success: function (response) {
+//                    //alert('success');
+//                    window.location.reload();
+//                    console.log('response: ',response);
+//                    GlobalVariables.full_path = response;
+//                }
+//
+//
+//            });
+//        }
+//
+//    });
 };
 
 /**
@@ -337,7 +340,7 @@ ServicesHelper.prototype.save = function(service) {
         //console.log('Save Service Response:', response);
         //////////////////////////////////////////////////
         if (!GeneralFunctions.handleAjaxExceptions(response)) return;
-
+        BackendServices.helper.savePicture(response.id);
         Backend.displayNotification(EALang['service_saved']);
         BackendServices.helper.resetForm();
         $('#filter-services .key').val('');
@@ -498,6 +501,61 @@ ServicesHelper.prototype.getFilterHtml = function(service) {
 
     return html;
 };
+
+
+
+
+/**
+ * 
+ */
+ServicesHelper.prototype.savePicture = function(serviceId) {
+    var val = $('#File').val();
+        
+        console.log("val" + val);
+        //var serviceId = $(this).attr('data-id');
+        console.log('serviceId', serviceId);
+        if (val == '') {
+            event.preventDefault();
+            $('#File').addClass('error');
+        } else
+        {   
+            
+            var file_data = $('#File').prop('files')[0];
+            var form_data = new FormData();
+            form_data.append('file', file_data);
+            form_data.append('csrfToken', GlobalVariables.csrfToken);
+            form_data.append('serviceId', serviceId);
+            console.log('form_data',form_data);
+            //$('.upload-file').hide();
+            //$("#progress").removeClass('hidden');
+
+            var postUrl = GlobalVariables.baseUrl + 'index.php/backend_api/send_file_service';
+
+
+
+
+            $.ajax({
+                url: postUrl, // point to server-side PHP script 
+                dataType: 'json', // what to expect back from the PHP script, if anything
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: form_data,
+                type: 'post',
+                success: function (response) {
+                    //alert('success');
+                    window.location.reload();
+                    console.log('response: ',response);
+                    GlobalVariables.full_path = response;
+                }
+
+
+            });
+        }
+};
+
+
+
 
 /**
  * Select a specific record from the current filter results. If the service id does not exist
@@ -725,7 +783,8 @@ CategoriesHelper.prototype.save = function(category) {
         ///////////////////////////////////////////////////////////
 
         if (!GeneralFunctions.handleAjaxExceptions(response)) return;
-
+        
+        BackendServices.helper.savePicture(response.id);
         Backend.displayNotification(EALang['service_category_saved']);
         BackendServices.helper.resetForm();
         $('#filter-categories .key').val('');

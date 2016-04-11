@@ -140,9 +140,9 @@
                                 <li><a href="<?php echo site_url('user/our_tenant'); ?>" ><strong>Nos  partenaires</strong></a></li>
                                 <li><a href="<?php echo site_url('user/company'); ?>" ><strong>Notre  agence</strong></a></li>
 
-                                <?php if ($customer_data) { ?>
-                                    <li><a href="<?php echo site_url('user/services'); ?>"><strong>Nos services</strong></a></li>
-                                <?php } ?>
+                                <?php // if ($customer_data) { ?>
+                                    <!--<li><a href="<?php echo site_url('user/services'); ?>"><strong>Nos services</strong></a></li>-->
+                                <?php // } ?>
                                 <li><a href="<?php echo site_url('user/tarif'); ?>"><strong>Tarifs</strong></a></li>
                                 <?php if (!$customer_data) { ?>
                                     <li><a href="<?php echo site_url('user/new_tenant'); ?>"><strong>Nous rejoindre</strong></a></li>

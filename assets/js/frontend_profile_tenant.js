@@ -43,7 +43,7 @@ var FrontendTenantProfile = {
         if (window.console === undefined) {
             window.console = function () {};// IE compatibility
         }
-        console.log(GlobalVariables.customerData);
+        console.log(GlobalVariables);
         window.fbAsyncInit = function () {
             FB.init({
                 appId: '535891186589773',
@@ -314,38 +314,38 @@ var FrontendTenantProfile = {
             $('.ask-dispo').html('<br/>Si vous ne trouvez pas une date qui vous convient vous pouvez envoyer une demande au administrateur');
             $('#waiting-appointment').attr('data-id', $(e.relatedTarget).data('book-id'));
 
-            console.log(GlobalVariables.customerData);
-
-            var currServiceId = $('#select-service').val();
-            $('#select-provider').empty();
-
-            $.each(GlobalVariables.availableProviders, function (indexProvider, provider) {
-                $.each(provider['services'], function (indexService, serviceId) {
-                    // If the current provider is able to provide the selected service,
-                    // add him to the listbox.
-                    if (serviceId == currServiceId) {
-                        var optionHtml = '<option value="' + provider['id'] + '">'
-                                + provider['first_name'] + ' ' + provider['last_name']
-                                + '</option>';
-                        $('#select-provider').append(optionHtml);
-                    }
-                });
-            });
-
-            // Add the "Any Provider" entry.
-            if ($('#provider-form').css("display") == "none")
-            {
-                if ($('#select-provider option').length >= 1) {
-                    $('#select-provider').append(new Option('- ' + EALang['any_provider'] + ' -', 'any-provider'));
-                }
-                $('#select-provider').val('any-provider');
-            }
-            console.log('provider: ', $('#select-provider').val());
-
-
-            FrontendTenantProfile.getAvailableHours($('#select-date').val());
-            FrontendTenantProfile.updateConfirmFrame();
-            FrontendTenantProfile.updateServiceDescription($('#select-service').val(), $('#service-description'));
+//            console.log(GlobalVariables.customerData);
+//
+//            var currServiceId = $('#select-service').val();
+//            $('#select-provider').empty();
+//
+//            $.each(GlobalVariables.availableProviders, function (indexProvider, provider) {
+//                $.each(provider['services'], function (indexService, serviceId) {
+//                    // If the current provider is able to provide the selected service,
+//                    // add him to the listbox.
+//                    if (serviceId == currServiceId) {
+//                        var optionHtml = '<option value="' + provider['id'] + '">'
+//                                + provider['first_name'] + ' ' + provider['last_name']
+//                                + '</option>';
+//                        $('#select-provider').append(optionHtml);
+//                    }
+//                });
+//            });
+//
+//            // Add the "Any Provider" entry.
+//            if ($('#provider-form').css("display") == "none")
+//            {
+//                if ($('#select-provider option').length >= 1) {
+//                    $('#select-provider').append(new Option('- ' + EALang['any_provider'] + ' -', 'any-provider'));
+//                }
+//                $('#select-provider').val('any-provider');
+//            }
+//            console.log('provider: ', $('#select-provider').val());
+//
+//
+//            FrontendTenantProfile.getAvailableHours($('#select-date').val());
+//            FrontendTenantProfile.updateConfirmFrame();
+//            FrontendTenantProfile.updateServiceDescription($('#select-service').val(), $('#service-description'));
 
 
         });
@@ -879,6 +879,46 @@ var FrontendTenantProfile = {
         $('.captcha-title small').click(function (event) {
             $('.captcha-image').attr('src', GlobalVariables.baseUrl + 'index.php/captcha?' + Date.now());
         });
+         /**
+         * Event: Selected Service "Changed"
+         *
+         * When the user clicks on a service, its available providers should
+         * become visible.
+         */
+        $('#select-service').change(function () {
+            var currServiceId = $('#select-service').val();
+            $('#select-provider').empty();
+            $.each(GlobalVariables.availableProviders, function (indexProvider, provider) {
+                $.each(provider['services'], function (indexService, serviceId) {
+                    // If the current provider is able to provide the selected service,
+                    // add him to the listbox.
+                    if (serviceId == currServiceId) {
+                        var optionHtml = '<option value="' + provider['id'] + '">'
+                                + provider['first_name'] + ' ' + provider['last_name']
+                                + '</option>';
+                        $('#select-provider').append(optionHtml);
+                    }
+                });
+            });
+
+            // Add the "Any Provider" entry.
+
+            if ($('#provider-form').css("display") == "none")
+            {
+                if ($('#select-provider option').length >= 1) {
+                    $('#select-provider').append(new Option('- ' + EALang['any_provider'] + ' -', 'any-provider'));
+                }
+                $('#select-provider').val('any-provider');
+            }
+            console.log('provider: ', $('#select-provider').val());
+
+
+            FrontendBook.getAvailableHours($('#select-date').val());
+            FrontendBook.updateConfirmFrame();
+            FrontendBook.updateServiceDescription($('#select-service').val(), $('#service-description'));
+        });
+        
+        
     },
     /**
      * This function makes an ajax call and returns the available
@@ -1010,8 +1050,11 @@ var FrontendTenantProfile = {
         if (selectedDate !== null) {
             selectedDate = GeneralFunctions.formatDate(selectedDate, GlobalVariables.dateFormat);
         }
-
+        
         var selServiceId = $('#select-service').val();
+        console.log('selServiceId',selServiceId);
+         console.log(GlobalVariables.availableServices);
+        
         var servicePrice, serviceCurrency;
         $.each(GlobalVariables.availableServices, function (index, service) {
             if (service.id == selServiceId) {

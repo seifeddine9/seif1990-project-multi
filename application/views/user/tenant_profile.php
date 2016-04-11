@@ -112,6 +112,7 @@ src="<?php echo $this->config->item('base_url'); ?>assets/js/frontend_profile_te
         appointmentData: <?php echo json_encode($appointment_data); ?>,
         providerData: <?php echo json_encode($provider_data); ?>,
         customerData: <?php echo json_encode($customer_data); ?>,
+        tenant: <?php echo json_encode($tenant); ?>,
         csrfToken: <?php echo json_encode($this->security->get_csrf_hash()); ?>,
         googleApiKey: <?php echo '"' . Config::GOOGLE_API_KEY . '"'; ?>,
         googleClientId: <?php echo '"' . Config::GOOGLE_CLIENT_ID . '"'; ?>,
@@ -253,33 +254,24 @@ if(data =='AJAX_FAILURE')
             <div class="col-sm-3">
                 <!-- Begin user profile -->
                 <div class="text-center user-profile-2">
-                    <h4>Howdy, <b>Jane Doe</b></h4>
+                    <h4>Howdy, <b><?php echo $tenant[0]['first_name']; ?></b></h4>
 
                     <h5>Administrator</h5>
                     <ul class="list-group">
                         <li class="list-group-item">
-                            <span class="badge">1,245</span>
-                            Followers
+                            <span class="badge">0</span>
+                            Nombre de rendez-vous
                         </li>
-                        <li class="list-group-item">
-                            <span class="badge">245</span>
-                            Following
-                        </li>
-                        <li class="list-group-item">
-                            <span class="badge">1,245</span>
-                            Tweets
-                        </li>
+                        
                     </ul>
 
                     <!-- User button -->
                     <div class="user-button">
                         <div class="row">
                             <div class="col-lg-6">
-                                <button type="button" class="btn btn-primary btn-sm btn-block"><i class="fa fa-envelope"></i> Send Message</button>
+                                <button type="button" class="btn btn-primary btn-sm"><i class="fa fa-envelope"></i> Envoyer un message</button>
                             </div>
-                            <div class="col-lg-6">
-                                <button type="button" class="btn btn-default btn-sm btn-block"><i class="fa fa-user"></i> Add as friend</button>
-                            </div>
+                            
                         </div>
                     </div><!-- End div .user-button -->
                 </div><!-- End div .box-info -->
@@ -320,21 +312,21 @@ if(data =='AJAX_FAILURE')
                         <!-- Tab about -->
                         <div class="tab-pane animated active" id="about">
                             <div class="user-profile-content">
-                                <h5><strong>ABOUT</strong> ME</h5>
+                                <h5><strong>À propos de </strong>nous</h5>
                                 <p>
                                     Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. 
                                 </p>
                                 <hr />
                                 <div class="row">
                                     <div class="col-sm-6">
-                                        <h5><strong>CONTACT</strong> ME</h5>
+                                        <h5><strong>Contacter</strong> nous</h5>
                                         <address>
-                                            <strong>Phone</strong><br>
-                                            <abbr title="Phone">+62 857 123 4567</abbr>
+                                            <strong>Telephone</strong><br>
+                                            <abbr title="Phone"><?php echo $tenant[0]['phone_number']; ?></abbr>
                                         </address>
                                         <address>
                                             <strong>Email</strong><br>
-                                            <a href="mailto:#">first.last@example.com</a>
+                                            <a href="mailto:#"><?php echo $tenant[0]['email']; ?></a>
                                         </address>
                                         <address>
                                             <strong>Website</strong><br>
@@ -416,18 +408,77 @@ if(data =='AJAX_FAILURE')
                 // ------------------------------------------------------
                 ?>
 
-                <div id="wizard-frame-1" class="wizard-frame" style="display:none;">
+                <div id="wizard-frame-1" class="wizard-frame" >
                     <div class="frame-container">
 
 
                         <div class="frame-content">
 
+                            
                             <div class="form-group">
-                                <input id="select-service" type ="hidden" class="col-md-4 form-control">
+                                <label for="select-service">
+                                    <?php echo $this->lang->line('select_service'); ?>
+                                </label>
+
+                                <select id="select-service" class="col-md-4 form-control">
+                                    <?php
+                                    // Group services by category, only if there is at least one service
+                                    // with a parent category.
+                                    $has_category = FALSE;
+                                    foreach ($available_services as $service) {
+                                        if ($service['category_id'] != NULL) {
+                                            $has_category = TRUE;
+                                            break;
+                                        }
+                                    }
+
+                                    if ($has_category) {
+                                        $grouped_services = array();
+
+                                        foreach ($available_services as $service) {
+                                            if ($service['category_id'] != NULL) {
+                                                if (!isset($grouped_services[$service['category_name']])) {
+                                                    $grouped_services[$service['category_name']] = array();
+                                                }
+
+                                                $grouped_services[$service['category_name']][] = $service;
+                                            }
+                                        }
+
+                                        // We need the uncategorized services at the end of the list so
+                                        // we will use another iteration only for the uncategorized services.
+                                        $grouped_services['uncategorized'] = array();
+                                        foreach ($available_services as $service) {
+                                            if ($service['category_id'] == NULL) {
+                                                $grouped_services['uncategorized'][] = $service;
+                                            }
+                                        }
+
+                                        foreach ($grouped_services as $key => $group) {
+                                            $group_label = ($key != 'uncategorized') ? $group[0]['category_name'] : 'Uncategorized';
+
+                                            if (count($group) > 0) {
+                                                echo '<optgroup label="' . $group_label . '">';
+                                                foreach ($group as $service) {
+                                                    echo '<option value="' . $service['id'] . '">'
+                                                    . $service['name'] . '</option>';
+                                                }
+                                                echo '</optgroup>';
+                                            }
+                                        }
+                                    } else {
+                                        foreach ($available_services as $service) {
+                                            echo '<option value="' . $service['id'] . '">'
+                                            . $service['name'] . '</option>';
+                                        }
+                                    }
+                                    ?>
+                                </select>
                             </div>
 
+
                             <br/>
-                            <div id="service-description" style="display:none;"></div>
+                            <div id="service-description"></div>
 
                             <br/>
                             <div class="form-group" id="provider-form"
@@ -807,7 +858,7 @@ if(data =='AJAX_FAILURE')
 
 <script
     type="text/javascript"
-src="<?php echo $this->config->item('base_url'); ?>assets/ext/themeforest/gmap3.min.js"></script>
+src="<?php echo $this->config->item('base_url'); ?>assets/ext/jquery-gmap3/gmap3.min.js"></script>
 
 
 

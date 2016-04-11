@@ -173,6 +173,7 @@ class User extends CI_Controller {
         $this->load->model('services_model');
         $this->load->model('customers_model');
         $this->load->model('settings_model');
+        $this->load->model('user_model');
 
         try {
             $available_services = $this->services_model->get_available_services($id_tenant);
@@ -181,7 +182,7 @@ class User extends CI_Controller {
             $show_provider = $this->settings_model->get_setting('show_provider',$id_tenant);
             $date_format = $this->settings_model->get_setting('date_format',$id_tenant);
             $base_url = $this->config->item('base_url');
-
+            $tenant=$this->user_model->get_tenant($id_tenant);
 
             // Remove the data that are not needed inside the $available_providers array.
             foreach ($available_providers as $index => $provider) {
@@ -209,7 +210,8 @@ class User extends CI_Controller {
                 'appointment_data' => $appointment,
                 'provider_data' => $provider,
                 'base_url' => $base_url,
-                'show_provider' => $show_provider
+                'show_provider' => $show_provider,
+                'tenant' => $tenant
             );
             $user_id = $this->session->userdata('user_id');
             if ($user_id == TRUE) {

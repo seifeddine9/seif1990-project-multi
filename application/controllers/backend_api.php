@@ -1606,7 +1606,7 @@ class Backend_api extends CI_Controller {
                 $provider['settings']['working_plan'] = $this->settings_model
                         ->get_setting('company_working_plan', $id_tenant);
             }
-
+            
             $provider['id_tenant'] = $id_tenant;
             $provider_id = $this->providers_model->add($provider);
 

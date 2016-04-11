@@ -82,51 +82,51 @@ CustomersHelper.prototype.bindEventHandlers = function () {
         return false;
     });
 
-    $('#File').change(function (event) {
-        var val = $('#File').val();
-        
-        console.log("val" + val);
-        var customerId = $(this).attr('data-id');
-        console.log('customerId', customerId);
-        if (val == '') {
-            event.preventDefault();
-            $('#File').addClass('error');
-        } else
-        {
-            var file_data = $('#File').prop('files')[0];
-            var form_data = new FormData();
-            form_data.append('file', file_data);
-            form_data.append('csrfToken', GlobalVariables.csrfToken);
-            form_data.append('customerId', customerId);
-
-            //$('.upload-file').hide();
-            //$("#progress").removeClass('hidden');
-
-            var postUrl = GlobalVariables.baseUrl + 'index.php/backend_api/send_file';
-
-
-
-
-            $.ajax({
-                url: postUrl, // point to server-side PHP script 
-                dataType: 'json', // what to expect back from the PHP script, if anything
-                cache: false,
-                contentType: false,
-                processData: false,
-                data: form_data,
-                type: 'post',
-                success: function (response) {
-                    //alert('success');
-                    window.location.reload();
-                    console.log(response);
-                    GlobalVariables.full_path = response;
-                }
-
-
-            });
-        }
-
-    });
+//    $('#File').change(function (event) {
+//        var val = $('#File').val();
+//        
+//        console.log("val" + val);
+//        var customerId = $(this).attr('data-id');
+//        console.log('customerId', customerId);
+//        if (val == '') {
+//            event.preventDefault();
+//            $('#File').addClass('error');
+//        } else
+//        {
+//            var file_data = $('#File').prop('files')[0];
+//            var form_data = new FormData();
+//            form_data.append('file', file_data);
+//            form_data.append('csrfToken', GlobalVariables.csrfToken);
+//            form_data.append('customerId', customerId);
+//
+//            //$('.upload-file').hide();
+//            //$("#progress").removeClass('hidden');
+//
+//            var postUrl = GlobalVariables.baseUrl + 'index.php/backend_api/send_file';
+//
+//
+//
+//
+//            $.ajax({
+//                url: postUrl, // point to server-side PHP script 
+//                dataType: 'json', // what to expect back from the PHP script, if anything
+//                cache: false,
+//                contentType: false,
+//                processData: false,
+//                data: form_data,
+//                type: 'post',
+//                success: function (response) {
+//                    //alert('success');
+//                    window.location.reload();
+//                    console.log(response);
+//                    GlobalVariables.full_path = response;
+//                }
+//
+//
+//            });
+//        }
+//
+//    });
 
     /**
      * Event: Filter Customers Clear Button "Click"
@@ -143,7 +143,7 @@ CustomersHelper.prototype.bindEventHandlers = function () {
      * Display the customer data of the selected row.
      */
     $(document).on('click', '.customer-row', function () {
-        document.getElementById("File").disabled = false;
+        //document.getElementById("File").disabled = true;
         if ($('#filter-customers .filter').prop('disabled')) {
             return; // Do nothing when user edits a customer record.
         }
@@ -196,7 +196,9 @@ CustomersHelper.prototype.bindEventHandlers = function () {
      * Event: Add Customer Button "Click"
      */
     $('#add-customer').click(function () {
+        
         BackendCustomers.helper.resetForm();
+         document.getElementById("File").disabled = false;
         $('#add-edit-delete-group').hide();
         $('#save-cancel-group').show();
         $('.details').find('input, textarea').prop('readonly', false);
@@ -209,6 +211,7 @@ CustomersHelper.prototype.bindEventHandlers = function () {
      * Event: Edit Customer Button "Click"
      */
     $('#edit-customer').click(function () {
+         document.getElementById("File").disabled = false;
         $('.details').find('input, textarea').prop('readonly', false);
         $('#add-edit-delete-group').hide();
         $('#save-cancel-group').show();
@@ -256,6 +259,8 @@ CustomersHelper.prototype.bindEventHandlers = function () {
             return;
 
         BackendCustomers.helper.save(customer);
+       
+        
     });
 
     /**
@@ -297,7 +302,7 @@ CustomersHelper.prototype.save = function (customer) {
 
         if (!GeneralFunctions.handleAjaxExceptions(response))
             return;
-
+        BackendCustomers.helper.savePicture(response.id);
         Backend.displayNotification(EALang['customer_saved']);
         BackendCustomers.helper.resetForm();
         $('#filter-customers .key').val('');
@@ -565,10 +570,10 @@ CustomersHelper.prototype.displayAppointment = function (appointment) {
  *
  * @param {object} appointment Appointment data
  */
-CustomersHelper.prototype.savePicture = function () {
+CustomersHelper.prototype.savePicture = function (customerId) {
     var val = $('#File').val();
     console.log("val" + val);
-    var customerId = $(this).attr('data-id');
+    //var customerId = $(this).attr('data-id');
     console.log('customerId', customerId);
     if (val == '') {
         event.preventDefault();
@@ -598,7 +603,7 @@ CustomersHelper.prototype.savePicture = function () {
             data: form_data,
             type: 'post',
             success: function (response) {
-                alert('success');
+                //alert('success');
                 console.log(response);
                 GlobalVariables.full_path = response;
             }

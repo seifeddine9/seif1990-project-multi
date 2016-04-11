@@ -189,7 +189,22 @@ class User_Model extends CI_Model {
 //        return $this->db->get('ea_users')->result_array();
         
     }
-
+    
+    public function get_tenant($id_tenant){
+        
+        
+        $where_clause='SELECT * FROM ea_users WHERE '.$id_tenant.' = id_tenant';
+        
+        $querry_rows = $this->db->query($where_clause);
+//        
+//        $querry_rows = $this->db->query('SELECT id_tenant FROM ea_users WHERE id = id_tenant');
+        
+        return $querry_rows->result_array();
+//        $this->db->select('id_tenant');
+//        $this->db->where('ea_users.id','ea_users.id_tenant');
+//        return $this->db->get('ea_users')->result_array();
+        
+    }
 }
 
 /* End of file user_model.php */

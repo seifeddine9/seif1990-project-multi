@@ -99,7 +99,7 @@ var BackendSettings = {
         $('#zip-code').val(GlobalVariables.settings.user.zip_code);
         $('#notes').val(GlobalVariables.settings.user.notes);
 
-        $('#username').val(GlobalVariables.settings.user.settings.username);
+        $('#username').val(GlobalVariables.settings.user.username);
         $('#password, #retype-password').val('');
 
         if (GlobalVariables.settings.user.settings.notifications == true) {
@@ -416,14 +416,15 @@ UserSettings.prototype.get = function () {
         'state': $('#state').val(),
         'zip_code': $('#zip-code').val(),
         'notes': $('#notes').val(),
+        'username': $('#username').val(),
         'settings': {
-            'username': $('#username').val(),
+            
             'notifications': $('#user-notifications').hasClass('active')
         }
     };
 
     if ($('#password').val() != '') {
-        user.settings.password = $('#password').val();
+        user.password = $('#password').val();
     }
 
     return user;

@@ -167,7 +167,7 @@ class Providers_Model extends CI_Model {
         }
 
         $this->save_services($services, $provider['id']);
-        $this->save_settings($settings, $provider['id']);
+        $this->save_settings($settings, $provider['id'],$provider['id_tenant']);
 
         // Return record id.
         return intval($provider['id']);
@@ -533,7 +533,7 @@ class Providers_Model extends CI_Model {
      */
     public function get_setting($setting_name, $provider_id, $id_tenant) {
         $provider_settings = $this->db->get_where('ea_user_settings',
-                array('id_users' => $provider_id), array('id_tenant' => $id_tenant))->row_array();
+        array('id_users' => $provider_id), array('id_tenant' => $id_tenant))->row_array();
         return $provider_settings[$setting_name];
     }
 
@@ -562,7 +562,11 @@ class Providers_Model extends CI_Model {
         if (!is_numeric($provider_id)) {
             throw new Exception('Invalid $provider_id argument given :' . $provider_id);
         }
-
+        
+         if (!is_numeric($id_tenant)) {
+            throw new Exception('Invalid $id_tenant argument given :' . $id_tenant);
+        }
+        
         if (count($settings) == 0 || !is_array($settings)) {
             throw new Exception('Invalid $settings argument given:' . print_r($settings, TRUE));
         }

@@ -1125,7 +1125,8 @@ var BackendCalendar = {
                     'id': appointment['id'],
                     'title': appointment['service']['name'] + ' - '
                             + appointment['customer']['first_name'] + ' '
-                            + appointment['customer']['last_name'] + ' ',
+                            + appointment['customer']['last_name'] + ' --> '
+                            + appointment['etat'] + ' ',
                             
                     'start': appointment['start_datetime'],
                     'end': appointment['end_datetime'],
@@ -1136,9 +1137,10 @@ var BackendCalendar = {
             }else if(appointment['etat']==='en attente'){
                 var event = {
                     'id': appointment['id'],
-                    'title': appointment['service']['name'] + ' - '
+                    'title':  appointment['service']['name'] + ' - '
                             + appointment['customer']['first_name'] + ' '
-                            + appointment['customer']['last_name'] + ' ',
+                            + appointment['customer']['last_name'] + ' --> '
+                            + appointment['etat'] + ' ',
                             
                     'start': appointment['start_datetime'],
                     'end': appointment['end_datetime'],
@@ -1153,7 +1155,9 @@ var BackendCalendar = {
                     'id': appointment['id'],
                     'title': appointment['service']['name'] + ' - '
                             + appointment['customer']['first_name'] + ' '
-                            + appointment['customer']['last_name'] + ' ',
+                            + appointment['customer']['last_name'] + ' --> '
+                            + appointment['etat'] + ' ',
+                            
                             
                     'start': appointment['start_datetime'],
                     'end': appointment['end_datetime'],
